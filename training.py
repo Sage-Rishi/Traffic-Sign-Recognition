@@ -25,8 +25,7 @@ def load_split(basePath, csvPath):
 	# all examples of a particular class will be in sequential order)
 	rows = open(csvPath).read().strip().split("\n")[1:]
 	random.shuffle(rows)
-
-# loop over the rows of the CSV file
+    # loop over the rows of the CSV file
 	for (i, row) in enumerate(rows):
 		# check to see if we should show a status update
 		if i > 0 and i % 1000 == 0:
@@ -37,7 +36,7 @@ def load_split(basePath, csvPath):
 		# derive the full path to the image file and load it
 		imagePath = os.path.sep.join([basePath, imagePath])
 		image = io.imread(imagePath)
-  # resize the image to be 32x32 pixels, ignoring aspect ratio,
+        		# resize the image to be 32x32 pixels, ignoring aspect ratio,
 		# and then perform Contrast Limited Adaptive Histogram
 		# Equalization (CLAHE)
 		image = transform.resize(image, (32, 32))
@@ -50,7 +49,7 @@ def load_split(basePath, csvPath):
 	labels = np.array(labels)
 	# return a tuple of the data and labels
 	return (data, labels)
-# construct the argument parser and parse the arguments
+    # construct the argument parser and parse the arguments
 ap = argparse.ArgumentParser()
 ap.add_argument("-d", "--dataset", required=True,
 	help="path to input GTSRB")
@@ -97,23 +96,18 @@ aug = ImageDataGenerator(
 # initialize the optimizer and compile the model
 print("[INFO] compiling model...")
 opt = Adam(lr=INIT_LR, decay=INIT_LR / (NUM_EPOCHS * 0.5))
-model = TrafficSignNet.build(width=32, height=32, depth=3,
-	classes=numLabels)
-model.compile(loss="categorical_crossentropy", optimizer=opt,
-	metrics=["accuracy"])
+model = TrafficSignNet.build(width=32, height=32, depth=3, classes=numLabels)
+model.compile(loss="categorical_crossentropy", optimizer=opt, metrics=["accuracy"])
 # train the network
 print("[INFO] training network...")
-H = model.fit_generator(
-	aug.flow(trainX, trainY, batch_size=BS),
-	validation_data=(testX, testY),
-	steps_per_epoch=trainX.shape[0] // BS,
-	epochs=NUM_EPOCHS,
-	class_weight=classWeight,
-	verbose=1)
-# evaluate the network
+H = model.fit_generator(aug.flow(trainX, trainY, batch_size=BS), validation_data=(testX, testY), steps_per_epoch=trainX.shape[0] // BS, epochs=NUM_EPOCHS, class_weight=classWeight, verbose=1)
+    # evaluate the network
 print("[INFO] evaluating network...")
 predictions = model.predict(testX, batch_size=BS)
+print(classification_report(testY.argmax(axis=1),
+	predictions.argmax(axis=1), target_names=labelNames))
 # save the network to disk
+print("[INFO] serializing network to '{}'...".format(args["model"]))
 model.save(args["model"])
 # plot the training loss and accuracy
 N = np.arange(0, NUM_EPOCHS)
