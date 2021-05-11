@@ -100,8 +100,8 @@ model = TrafficSignNet.build(width=32, height=32, depth=3, classes=numLabels)
 model.compile(loss="categorical_crossentropy", optimizer=opt, metrics=["accuracy"])
 # train the network
 print("[INFO] training network...")
-H = model.fit_generator(aug.flow(trainX, trainY, batch_size=BS), validation_data=(testX, testY), steps_per_epoch=trainX.shape[0] // BS, epochs=NUM_EPOCHS, class_weight=classWeight, verbose=1)
-    # evaluate the network
+H = model.fit_generator(aug.flow(trainX, trainY, batch_size = BS), validation_data = (testX, testY), steps_per_epoch = trainX.shape[0] // BS, epochs = NUM_EPOCHS, class_weight = classWeight, verbose = 1)
+# evaluate the network
 print("[INFO] evaluating network...")
 predictions = model.predict(testX, batch_size=BS)
 print(classification_report(testY.argmax(axis=1),
